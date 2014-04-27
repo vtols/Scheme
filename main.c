@@ -8,21 +8,26 @@
 #include <init.h>
 
 #define PROGRAM_NAME "sch"
+#define DEFAULT_PROMPT "sch"
 
 void print_usage();
-void run_interactive_loop(env_hashtable *env);
+void run_interactive_loop(const char *prompt, env_hashtable *env);
 void run_single(const char *expr, env_hashtable *env);
 
 int main(int argc, char *argv[])
 {
     env_hashtable *global_env;
-    char *expr = NULL;
+    char *expr = NULL,
+         *prompt = NULL;
     int opt;
     
-    while ((opt = getopt(argc, argv, "e:h")) != -1){
+    while ((opt = getopt(argc, argv, "e:hp:")) != -1){
         switch (opt) {
             case 'e':
                 expr = strdup(optarg);
+                break;
+            case 'p':
+                prompt = strdup(optarg);
                 break;
             case 'h':
             case '?':
@@ -37,7 +42,7 @@ int main(int argc, char *argv[])
     init_global_environment(global_env);
     
     if (!expr)
-        run_interactive_loop(global_env);
+        run_interactive_loop(prompt, global_env);
     else {
         run_single(expr, global_env);
         free(expr);
@@ -53,12 +58,12 @@ void print_usage()
         PROGRAM_NAME " [-e <expression>]");
 }
 
-void run_interactive_loop(env_hashtable *env)
+void run_interactive_loop(const char *prompt, env_hashtable *env)
 {
     object *obj;
     
     while (1) {
-        printf("> ");
+        printf("%s", (prompt ? prompt : DEFAULT_PROMPT));
         
         obj = parse_single(NULL);
         if (obj == null_object)

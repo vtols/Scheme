@@ -8,7 +8,7 @@
 #include <init.h>
 
 #define PROGRAM_NAME "sch"
-#define DEFAULT_PROMPT "sch"
+#define DEFAULT_PROMPT "> "
 
 void print_usage();
 void run_interactive_loop(const char *prompt, env_hashtable *env);

@@ -44,7 +44,6 @@ static void define_pair_procedures(env_hashtable *env)
 {
     void define_recursive(char *ad_name, char *body, int depth) {
         char bufa[1000], bufb[1000];
-        int k = 0;
         if (depth > 4)
             return;
         if (depth > 1) {
@@ -53,7 +52,6 @@ static void define_pair_procedures(env_hashtable *env)
                     ad_name,
                     body);
             eval_str(bufa, env);
-            k++;
         }
         
         sprintf(bufa, "a%s", ad_name);

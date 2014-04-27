@@ -1,19 +1,63 @@
 #include <stdio.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <parser.h>
 #include <hashtable.h>
 #include <eval.h>
 #include <init.h>
 
-int main(void)
+#define PROGRAM_NAME "sch"
+
+void print_usage();
+void run_interactive_loop(env_hashtable *env);
+void run_single(const char *expr, env_hashtable *env);
+
+int main(int argc, char *argv[])
+{
+    env_hashtable *global_env;
+    char *expr = NULL;
+    int opt;
+    
+    while ((opt = getopt(argc, argv, "e:h")) != -1){
+        switch (opt) {
+            case 'e':
+                expr = strdup(optarg);
+                break;
+            case 'h':
+            case '?':
+                print_usage();
+                exit(EXIT_FAILURE);
+            default:
+                break;
+        };
+    };
+    
+    global_env = env_hashtable_new();
+    init_global_environment(global_env);
+    
+    if (!expr)
+        run_interactive_loop(global_env);
+    else {
+        run_single(expr, global_env);
+        free(expr);
+    }
+    
+    return 0;
+}
+
+void print_usage()
+{
+    printf("%s\n",
+        "Usage: "
+        PROGRAM_NAME " [-e <expression>]");
+}
+
+void run_interactive_loop(env_hashtable *env)
 {
     object *obj;
-    env_hashtable *env;
     
-    env = env_hashtable_new();
-    init_global_environment(env);
-    
-    for (;;) {
+    while (1) {
         printf("> ");
         
         obj = parse_single(NULL);
@@ -22,6 +66,12 @@ int main(void)
         obj = eval(obj, env);
         print_object_newline(obj);
     }
+}
+
+void run_single(const char *expr, env_hashtable *env)
+{
+    object *obj;
     
-    return 0;
+    obj = eval_str(expr, env);
+    print_object_newline(obj);
 }

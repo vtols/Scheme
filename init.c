@@ -27,6 +27,8 @@ void init_global_environment(env_hashtable *env)
 {
     init_primitive_procedures(env);
     define_pair_procedures(env);
+    
+    eval_str("(define null '())", env);
 }
 
 static void init_primitive_procedures(env_hashtable *env)

@@ -61,6 +61,15 @@ struct object
 #define CDDR(__x) CDR(CDR(__x))
 #define CADDR(__x) CAR(CDR(CDR(__x)))
 
+/* Access to compound procedures internals */
+#define CPROC(__x) ((__x)->obj.c_proc)
+#define CPROC_PARAMS(__x) (CPROC(__x).params)
+#define CPROC_BODY(__x) (CPROC(__x).body)
+#define CPROC_ENV(__x) (CPROC(__x).env)
+
+/* Access to primitive procedures */
+#define PROC(__x) ((__x)->obj.proc)
+
 /* Null object */
 extern object *null_object;
 

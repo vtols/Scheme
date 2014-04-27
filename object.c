@@ -18,41 +18,41 @@ object *null_object = &null_value;
 object *cons(object *first, object *rest)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_PAIR;
-    p->obj.pr.car = first;
-    p->obj.pr.cdr = rest;
+    TYPE(p) = OBJ_PAIR;
+    CAR(p) = first;
+    CDR(p) = rest;
     return p;
 }
 
 object *symbol(const char *s)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_SYMBOL;
-    p->obj.str = strdup(s);
+    TYPE(p) = OBJ_SYMBOL;
+    STR(p) = strdup(s);
     return p;
 }
 
 object *number_str(const char *s)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_NUMBER;
-    sscanf(s, "%d", &p->obj.num);
+    TYPE(p) = OBJ_NUMBER;
+    sscanf(s, "%d", &NUM(p));
     return p;
 }
 
 object *number_int(int n)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_NUMBER;
-    p->obj.num = n;
+    TYPE(p) = OBJ_NUMBER;
+    NUM(p) = n;
     return p;
 }
 
 object *primitive_procedure(primitive_proc proc)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_PRIMITIVE_PROCEDURE;
-    p->obj.proc = proc;
+    TYPE(p) = OBJ_PRIMITIVE_PROCEDURE;
+    PROC(p) = proc;
     return p;
 }
 
@@ -60,10 +60,10 @@ object *compound_procedure(object *params, object *body,
             env_hashtable *env)
 {
     object *p = ALLOC(object);
-    p->obj_type = OBJ_COMPOUND_PROCEDURE;
-    p->obj.c_proc.params = params;
-    p->obj.c_proc.body = body;
-    p->obj.c_proc.env = env;
+    TYPE(p) = OBJ_COMPOUND_PROCEDURE;
+    CPROC_PARAMS(p) = params;
+    CPROC_BODY(p) = body;
+    CPROC_ENV(p) = env;
     return p;
 }
 
@@ -72,21 +72,21 @@ void print_object(object *obj)
     int first = 1;
     if (!obj)
         return;
-    switch (obj->obj_type) {
+    switch (TYPE(obj)) {
         case OBJ_SYMBOL:
-            printf("%s", obj->obj.str);
+            printf("%s", STR(obj));
             break;
         case OBJ_NUMBER:
-            printf("%d", obj->obj.num);
+            printf("%d", NUM(obj));
             break;
         case OBJ_PAIR:
             printf("(");
-            while (obj->obj_type == OBJ_PAIR &&
+            while (TYPE(obj) == OBJ_PAIR &&
                    obj != null_object) {
                 if (!first)
                     putchar(' ');
-                print_object(obj->obj.pr.car);
-                obj = obj->obj.pr.cdr;
+                print_object(CAR(obj));
+                obj = CDR(obj);
                 first = 0;
             }
             if (obj != null_object) {

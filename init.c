@@ -1,14 +1,23 @@
+/* init.c - Startup initialization */
+
+/* sprintf */
 #include <stdio.h>
 
 #include <init.h>
+
+/* eval_str */
 #include <eval.h>
+
+/* Primitive procedures */
 #include <primitive.h>
 
+/* Item of initialization table */
 struct init {
     char *key;
     primitive_proc value;
 };
 
+/* Initialization table for primitive procedures */
 static struct init proc_init_table[] = {
     {"+", proc_primitive_plus},
     {"*", proc_primitive_mul},
@@ -28,9 +37,11 @@ void init_global_environment(env_hashtable *env)
     init_primitive_procedures(env);
     define_pair_procedures(env);
     
+    /* Parser determines empty brackets as null_object */
     eval_str("(define null '())", env);
 }
 
+/* Put all primitive procedures from table to environment */
 static void init_primitive_procedures(env_hashtable *env)
 {
     int i;
@@ -42,6 +53,7 @@ static void init_primitive_procedures(env_hashtable *env)
     }
 }
 
+/* Define procedures cadr, caddr, etc. */
 static void define_pair_procedures(env_hashtable *env)
 {
     void define_recursive(char *ad_name, char *body, int depth) {

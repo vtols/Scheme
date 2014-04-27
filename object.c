@@ -1,5 +1,9 @@
+/* object.c - Work with objects */
+
+/* sscanf, printf */
 #include <stdio.h>
-#include <stdlib.h>
+
+/* strdup */
 #include <string.h>
 
 #include <object.h>

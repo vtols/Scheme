@@ -1,4 +1,4 @@
-/* eval.c - evaluation */
+/* eval.c - Evaluation */
 
 #include <stdio.h>
 #include <string.h>

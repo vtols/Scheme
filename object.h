@@ -1,12 +1,15 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+/* env_hashtable */
 #include <hashtable.h>
 
+/* Shorthand for allocation */
 #define ALLOC(T) ((T*) malloc(sizeof(T)))
 
 typedef struct object object;
 
+/* Type of primitive procedure */
 typedef object *(*primitive_proc)(object *);
 
 /* Object types */
@@ -21,7 +24,7 @@ enum object_type
     OBJ_COMPOUND_PROCEDURE,
 };
 
-/*  */
+/* Object itself */
 struct object
 {
     enum object_type obj_type;

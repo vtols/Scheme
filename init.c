@@ -52,7 +52,6 @@ static void define_pair_procedures(env_hashtable *env)
                     "(define c%sr (lambda (x) %s))",
                     ad_name,
                     body);
-            printf("Define c%sr procedure\n", ad_name);
             eval_str(bufa, env);
             k++;
         }

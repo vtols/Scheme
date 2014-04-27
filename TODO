@@ -1,0 +1,21 @@
+1. Rewrite eval/apply without recursion:
+
+    Program stack must be independent from interpreter stack
+
+2. Add Garbage Collection
+
+3. Rewrite Hash Table implementation:
+
+    Hash function is't really good
+
+4. Develop more flexible environments for variables
+
+5. Implement all basic Scheme types
+
+6. Develop errors mechanism
+
+8. Add syntactic constructions:
+
+    Detect syntax not in eval
+
+7. Add macro preprocessing

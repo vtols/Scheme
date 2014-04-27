@@ -1,0 +1,6 @@
+#Editor files 
+*~
+
+#Object files
+*.o
+sch

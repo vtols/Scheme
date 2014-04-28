@@ -65,7 +65,7 @@ object *eval(object *obj, env_hashtable *env)
     }
     
     /* Object evaluation */
-    switch (obj->obj_type) {
+    switch (TYPE(obj)) {
         case OBJ_NUMBER:
         case OBJ_BOOLEAN:
             return obj;
@@ -77,7 +77,7 @@ object *eval(object *obj, env_hashtable *env)
             last_pair = NULL;
             
             while (cur != null_object && 
-                   cur->obj_type == OBJ_PAIR) {
+                   TYPE(cur) == OBJ_PAIR) {
                 t = cons(eval(CAR(cur), env), null_object);
                 if (!last_pair)
                     eobj = t;
@@ -104,13 +104,13 @@ object *apply(object *proc, object *args)
     env_hashtable *e;
     object *params, *param, *arg;
     char *s_param;
-    if (proc->obj_type == OBJ_PRIMITIVE_PROCEDURE) {
-        p = proc->obj.proc;
+    if (TYPE(proc) == OBJ_PRIMITIVE_PROCEDURE) {
+        p = PROC(proc);
         return p(args);
     } else if (TYPE(proc) == OBJ_COMPOUND_PROCEDURE) {
-        e = env_hashtable_child(proc->obj.c_proc.env);
+        e = env_hashtable_child(CPROC_ENV(proc));
         
-        params = proc->obj.c_proc.params;
+        params = CPROC_PARAMS(proc);
         while (params != null_object) {
             if (TYPE(params) != OBJ_PAIR) {
                 param = params;
@@ -130,7 +130,7 @@ object *apply(object *proc, object *args)
             params = CDR(params);
             args = CDR(args);
         }
-        return eval(proc->obj.c_proc.body, e);
+        return eval(CPROC_BODY(proc), e);
     }
     return NULL;
 }

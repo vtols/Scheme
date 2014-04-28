@@ -146,14 +146,14 @@ object *parse_list()
     while (tok != TOK_RPAREN) {
         if (tok == TOK_DOT) {
             next_tok(); /* . */
-            last_pair->obj.pr.cdr = parse_element();
+            CDR(last_pair) = parse_element();
             break;
         }
         t = cons(parse_element(), null_object);
         if (!last_pair)
             list = t;
         else
-            last_pair->obj.pr.cdr = t;
+            CDR(last_pair) = t;
         last_pair = t;
     }
     

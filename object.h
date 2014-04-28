@@ -17,6 +17,7 @@ enum object_type
 {
     OBJ_SYMBOL,
     OBJ_NUMBER,
+    OBJ_BOOLEAN,
     OBJ_PAIR,
     /* For special symbols as: lambda, let, define ... */
     /*OBJ_SPECIAL,*/
@@ -29,7 +30,7 @@ struct object
 {
     enum object_type obj_type;
     union {
-        /* Store numeric */
+        /* Store numeric or boolean */
         int num;
         
         /* Store symbol */
@@ -75,6 +76,10 @@ struct object
 
 /* Null object */
 extern object *null_object;
+
+/* Boolean objects */
+extern object *true_object;
+extern object *false_object;
 
 object *symbol(const char *s);
 object *number_str(const char *s);

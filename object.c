@@ -16,7 +16,19 @@ object null_value = {
     },
 };
 
+object true_value = {
+    .obj_type = OBJ_BOOLEAN,
+    .obj.num = 1,
+};
+
+object false_value = {
+    .obj_type = OBJ_BOOLEAN,
+    .obj.num = 0,
+};
+
 object *null_object = &null_value;
+object *true_object = &true_value;
+object *false_object = &false_value;
 
 /* Internal cons implementation */
 object *cons(object *first, object *rest)
@@ -82,6 +94,9 @@ void print_object(object *obj)
             break;
         case OBJ_NUMBER:
             printf("%d", NUM(obj));
+            break;
+        case OBJ_BOOLEAN:
+            printf("%s", (NUM(obj) ? "#t" : "#f"));
             break;
         case OBJ_PAIR:
             printf("(");

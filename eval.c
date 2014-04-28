@@ -67,6 +67,7 @@ object *eval(object *obj, env_hashtable *env)
     /* Object evaluation */
     switch (obj->obj_type) {
         case OBJ_NUMBER:
+        case OBJ_BOOLEAN:
             return obj;
         case OBJ_SYMBOL:
             return env_hashtable_find(env, STR(obj));

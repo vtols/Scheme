@@ -7,6 +7,8 @@ enum token
 {
     TOK_SYMBOL,
     TOK_NUMBER,
+    TOK_TRUE,
+    TOK_FALSE,
     TOK_LPAREN,
     TOK_RPAREN,
     TOK_DOT,

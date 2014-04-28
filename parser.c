@@ -57,6 +57,17 @@ int next()
         case '\'':
             ret = TOK_SINGLE_QUOTE;
             break;
+        case '#':
+            buf[0] = '#';
+            read();
+            if (c == 't')
+                ret = TOK_TRUE;
+            else if (c == 'f')
+                ret = TOK_FALSE;
+            buf[1] = c;
+            buf[2] = c;
+            read();
+            return ret;
         default:
             while (c != '(' && c != ')' && 
                    c != ' ' && c != '\n' &&
@@ -109,6 +120,12 @@ object *parse_element()
         next_tok();
     } else if (tok == TOK_NUMBER) {
         ret = number_str(buf);
+        next_tok();
+    } else if (tok == TOK_TRUE) {
+        ret = true_object;
+        next_tok();
+    } else if (tok == TOK_FALSE) {
+        ret = false_object;
         next_tok();
     } else if (tok == TOK_SINGLE_QUOTE) {
         next_tok();

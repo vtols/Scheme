@@ -5,7 +5,7 @@ project(Scheme)
 set(DEFAULT_PROMPT "> " CACHE STRING "Default prompt")
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "-g -Wall -O2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 endif()
 
 set(BUILD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build)

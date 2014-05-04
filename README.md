@@ -13,6 +13,7 @@ FreeBSD 10.0 | Clang 3.3.0
 Windows 8 | MSVC 18 (Visual Studio 2013)
 
 Last version of Visual Studio is highly recommended, becuase it have C99 support.
+Also now Windows version doesn't support command-line options.
 
 To build project, firstly run commands in source directory:
 ```
@@ -25,3 +26,17 @@ Next, on Linux or FreeBSD run:
 $ make
 ```
 On Windows open generated *.sln file, select 'sch' as startup project and build.
+
+# Run
+Example of expression evaluation:
+```
+$ ./sch -e '((lambda (x) (* x x)) 5)'
+25
+```
+Example of interactive execution:
+```
+$ ./sch 
+> (define add2 (lambda (x) (define y 2) (+ x y)))
+> (add2 5)
+7
+```

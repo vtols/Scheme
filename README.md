@@ -40,3 +40,6 @@ $ ./sch
 > (add2 5)
 7
 ```
+
+#Notes
+Interpreter may unexpectedly crash, because it does not have error handling mechanism yet.

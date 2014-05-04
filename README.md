@@ -8,6 +8,7 @@ Build tested on this configurations:
 OS | Compiler
 --- | ---
 GNU/Linux | GCC 4.7.2
+FreeBSD 10.0 | Clang 3.3.0
 Windows 8 | MSVC 18 (Visual Studio 2013)
 
 Last version of Visual Studio is highly recommended, becuase it have C99 support.
@@ -18,7 +19,7 @@ $ mkdir build
 $ cd build
 $ cmake ..
 ```
-Next, on Linux run:
+Next, on Linux or FreeBSD run:
 ```
 $ make
 ```

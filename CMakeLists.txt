@@ -23,8 +23,10 @@ include_directories ("${BUILD_CONFIG_PATH}")
 set(BINARY sch)
 
 include(CheckIncludeFiles)
+include(CheckFunctionExists)
 
-check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(getopt.h HAVE_GETOPT_H)
+check_function_exists(getopt HAVE_GETOPT)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${BUILD_CONFIG_PATH}/config.h)

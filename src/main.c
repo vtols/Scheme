@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <unistd.h>
 
 #include <parser.h>
 #include <hashtable.h>
@@ -7,6 +6,10 @@
 #include <init.h>
 
 #include <config.h>
+
+#ifdef HAVE_GETOPT_H
+# include <getopt.h>
+#endif
 
 void print_usage();
 void run_interactive_loop(const char *prompt, env_hashtable *env);
@@ -19,6 +22,7 @@ int main(int argc, char *argv[])
          *prompt = NULL;
     int opt;
     
+#ifdef HAVE_GETOPT
     while ((opt = getopt(argc, argv, "e:hp:")) != -1){
         switch (opt) {
             case 'e':
@@ -35,6 +39,7 @@ int main(int argc, char *argv[])
                 break;
         };
     };
+#endif
     
     global_env = env_hashtable_new();
     init_global_environment(global_env);

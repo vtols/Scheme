@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <parser.h>
@@ -23,10 +22,10 @@ int main(int argc, char *argv[])
     while ((opt = getopt(argc, argv, "e:hp:")) != -1){
         switch (opt) {
             case 'e':
-                expr = strdup(optarg);
+                expr = optarg;
                 break;
             case 'p':
-                prompt = strdup(optarg);
+                prompt = optarg;
                 break;
             case 'h':
             case '?':
@@ -42,10 +41,8 @@ int main(int argc, char *argv[])
     
     if (!expr)
         run_interactive_loop(prompt, global_env);
-    else {
+    else
         run_single(expr, global_env);
-        free(expr);
-    }
     
     return 0;
 }

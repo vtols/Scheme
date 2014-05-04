@@ -7,15 +7,6 @@
 #define MAX 2000000000
 #define HASH(A, B) (A % B)
 
-#ifndef strdup
-char *strdup(const char *s)
-{
-    char *t = malloc(strlen(s) + 1);
-    strcpy(t, s);
-    return t;
-}
-#endif
-
 struct node
 {
     node *n, *p;

@@ -1,6 +1,5 @@
 #Editor files 
 *~
 
-#Object files
-*.o
-sch
+#Build path
+build

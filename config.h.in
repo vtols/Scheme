@@ -1,0 +1,4 @@
+#define PROGRAM_NAME "@BINARY@"
+#define DEFAULT_PROMPT "@DEFAULT_PROMPT@"
+
+#cmakedefine HAVE_UNISTD_H 1

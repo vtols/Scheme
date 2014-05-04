@@ -31,6 +31,8 @@ static struct init proc_init_table[] = {
 
 static void init_primitive_procedures(env_hashtable *env);
 static void define_pair_procedures(env_hashtable *env);
+static void define_recursive(char *ad_name, char *body, int depth,
+                        env_hashtable *env);
 
 void init_global_environment(env_hashtable *env)
 {
@@ -56,7 +58,11 @@ static void init_primitive_procedures(env_hashtable *env)
 /* Define procedures cadr, caddr, etc. */
 static void define_pair_procedures(env_hashtable *env)
 {
-    void define_recursive(char *ad_name, char *body, int depth) {
+    define_recursive("", "x", 0, env);
+}
+
+static void define_recursive(char *ad_name, char *body, int depth,
+                        env_hashtable *env) {
         char bufa[1000], bufb[1000];
         if (depth > 4)
             return;
@@ -70,11 +76,9 @@ static void define_pair_procedures(env_hashtable *env)
         
         sprintf(bufa, "a%s", ad_name);
         sprintf(bufb, "(car %s)", body);
-        define_recursive(bufa, bufb, depth + 1);
+        define_recursive(bufa, bufb, depth + 1, env);
         
         sprintf(bufa, "d%s", ad_name);
         sprintf(bufb, "(cdr %s)", body);
-        define_recursive(bufa, bufb, depth + 1);
+        define_recursive(bufa, bufb, depth + 1, env);
     }
-    define_recursive("", "x", 0);
-}

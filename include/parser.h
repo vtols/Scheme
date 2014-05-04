@@ -3,6 +3,10 @@
 
 #include <object.h>
 
+#define MAXBUF 2000
+
+typedef struct parser parser;
+
 enum token
 {
     TOK_SYMBOL,
@@ -16,7 +20,39 @@ enum token
     TOK_EOF,
 };
 
+struct parser
+{
+    /* Input file */
+    FILE *in;
+    
+    /* Current character */
+    int cur_c;
+    
+    /* Length of current token */
+    int token_len;
+    
+    /* Flag which means we read from buffer */
+    int read_buffer;
+    
+    /* Flag which means we want to read single line */
+    int single_line;
+    
+    /* Current position when reading from buffer */
+    int read_pos;
+    
+    /* Current token type */
+    enum token cur_tok;
+    
+    /* Current token value */
+    char token_buffer[MAXBUF];
+    
+    /* Buffer for reading */
+    char input_buffer[MAXBUF];
+};
+
 extern char *names[];
+
+void parser_reset(parser *p);
 
 object *parse_single();
 object *parse_list();

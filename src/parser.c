@@ -4,7 +4,7 @@
 #include <parser.h>
 #include <object.h>
 
-#define MAXBUF 2000
+
 #define DIGIT(x) ((x) >= '0' && (x) <= '9')
 
 char *names[] =
@@ -17,32 +17,43 @@ char *names[] =
     [TOK_SINGLE_QUOTE] = "TOK_SINGLE_QUOTE",
 };
 
-char buf[MAXBUF], c = EOF;
-char rbuf[MAXBUF];
-int rpos = 0;
-/* Flag */
-int single_line = 0, read_buffer = 0;
-enum token tok;
-
-int read()
+void parser_reset(parser *p)
 {
-    if (read_buffer)
-        c = rbuf[rpos++];
-    else
-        c = getchar();
-    if (c == 0 || (single_line && c == '\n'))
-        c = EOF;
-    return c;
+    p->in = stdin;
+    p->cur_c = EOF;
+    p->cur_tok = EOF;
+    p->read_buffer = 0;
+    p->single_line = 0;
+    p->token_len = 0;
 }
 
-int next()
+int read(parser *p)
 {
-    int ret = TOK_EOF, i = 0, all_digit = 1;
+    if (p->cur_c != EOF) {
+        p->token_buffer[p->token_len++] = p->cur_c;
+        p->token_buffer[p->token_len] = '\0';
+    }
+    if (p->read_buffer)
+        p->cur_c = p->input_buffer[p->read_pos++];
+    else
+        p->cur_c = fgetc(p->in);
+    if (p->cur_c == 0 || (p->single_line && p->cur_c == '\n'))
+        p->cur_c = EOF;
+    return p->cur_c;
+}
+
+int next(parser *p)
+{
+    int ret = TOK_EOF, all_digit = 1;
     
-    while (c == ' ' || c == '\n')
-        read();
+    p->token_len = 0;
+    
+    while (p->cur_c == ' ' || p->cur_c == '\n') {
+        read(p);
+        p->token_len = 0;
+    }
         
-    switch(c) {
+    switch(p->cur_c) {
         case EOF:
             return TOK_EOF;
         case '(':
@@ -58,98 +69,90 @@ int next()
             ret = TOK_SINGLE_QUOTE;
             break;
         case '#':
-            buf[0] = '#';
-            read();
-            if (c == 't')
+            read(p);
+            if (p->cur_c == 't')
                 ret = TOK_TRUE;
-            else if (c == 'f')
+            else if (p->cur_c == 'f')
                 ret = TOK_FALSE;
-            buf[1] = c;
-            buf[2] = c;
-            read();
+            read(p);
             return ret;
         default:
-            while (c != '(' && c != ')' && 
-                   c != ' ' && c != '\n' &&
-                   c != EOF) {
-                all_digit &= DIGIT(c);
-                buf[i++] = c;
-                read();
+            while (p->cur_c != '(' && p->cur_c != ')' && 
+                   p->cur_c != ' ' && p->cur_c != '\n' &&
+                   p->cur_c != EOF) {
+                all_digit &= DIGIT(p->cur_c);
+                read(p);
             }
-            buf[i] = '\0';
             ret = (all_digit ? TOK_NUMBER : TOK_SYMBOL);
             return ret;
             break;
     }
-    
-    buf[0] = c;
-    buf[1] = '\0';
-    read();
+    read(p);
     
     return ret;
 }
 
-int next_tok()
+int next_tok(parser *p)
 {
-    return tok = next();
+    return p->cur_tok = next(p);
 }
 
-object *parse_single(char *s)
+object *parse_single(parser *p, char *s)
 {
+    parser_reset(p);
     if (s) {
-        strcpy(rbuf, s);
-        read_buffer = 1;
-        rpos = 0;
-    } else
-        read_buffer = 0;
-    single_line = 1;
+        strcpy(p->input_buffer, s);
+        p->read_buffer = 1;
+        p->read_pos = 0;
+    }
+    p->single_line = 1;
     
-    read();
-    next_tok();
+    read(p);
+    next_tok(p);
     
-    return parse_element();
+    return parse_element(p);
 }
 
-object *parse_element()
+object *parse_element(parser *p)
 {
     object *ret = null_object;
-    if (tok == TOK_LPAREN)
+    if (p->cur_tok == TOK_LPAREN)
         ret = parse_list();
-    else if (tok == TOK_SYMBOL) {
-        ret = symbol(buf);
-        next_tok();
-    } else if (tok == TOK_NUMBER) {
-        ret = number_str(buf);
-        next_tok();
-    } else if (tok == TOK_TRUE) {
+    else if (p->cur_tok == TOK_SYMBOL) {
+        ret = symbol(p->token_buffer);
+        next_tok(p);
+    } else if (p->cur_tok == TOK_NUMBER) {
+        ret = number_str(p->token_buffer);
+        next_tok(p);
+    } else if (p->cur_tok == TOK_TRUE) {
         ret = true_object;
-        next_tok();
-    } else if (tok == TOK_FALSE) {
+        next_tok(p);
+    } else if (p->cur_tok == TOK_FALSE) {
         ret = false_object;
-        next_tok();
-    } else if (tok == TOK_SINGLE_QUOTE) {
-        next_tok();
+        next_tok(p);
+    } else if (p->cur_tok == TOK_SINGLE_QUOTE) {
+        next_tok(p);
         ret = cons(symbol("quote"),
-                   cons(parse_element(), null_object));
+                   cons(parse_element(p), null_object));
     }
     return ret;
 }
 
-object *parse_list()
+object *parse_list(parser *p)
 {
     object *list = null_object,
            *last_pair = NULL,
            *t;
     
-    next_tok(); /* ( */
+    next_tok(p); /* ( */
     
-    while (tok != TOK_RPAREN) {
-        if (tok == TOK_DOT) {
-            next_tok(); /* . */
-            CDR(last_pair) = parse_element();
+    while (p->cur_tok != TOK_RPAREN) {
+        if (p->cur_tok == TOK_DOT) {
+            next_tok(p); /* . */
+            CDR(last_pair) = parse_element(p);
             break;
         }
-        t = cons(parse_element(), null_object);
+        t = cons(parse_element(p), null_object);
         if (!last_pair)
             list = t;
         else
@@ -157,7 +160,7 @@ object *parse_list()
         last_pair = t;
     }
     
-    next_tok(); /* ) */
+    next_tok(p); /* ) */
     
     return list;
 }

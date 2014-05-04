@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/mtcomscxstart/Scheme.svg?branch=master)](https://travis-ci.org/mtcomscxstart/Scheme)
 # Scheme
 
 Scheme is interpreter implementation for Scheme language.

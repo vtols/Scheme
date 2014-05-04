@@ -11,9 +11,9 @@ endif()
 set(BUILD_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build)
 set(BUILD_CONFIG_PATH ${BUILD_PATH}/config)
 
-set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(SOURCE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-set(INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 include_directories ("${INCLUDE_PATH}")
 
@@ -26,18 +26,18 @@ include(CheckIncludeFiles)
 
 check_include_files(unistd.h HAVE_UNISTD_H)
 
-configure_file(${INCLUDE_PATH}/config.h.in
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${BUILD_CONFIG_PATH}/config.h)
 
 
 set(SOURCES
-    ${INCLUDE_PATH}/eval.c
-    ${INCLUDE_PATH}/hashtable.c
-    ${INCLUDE_PATH}/init.c
-    ${INCLUDE_PATH}/main.c
-    ${INCLUDE_PATH}/object.c
-    ${INCLUDE_PATH}/parser.c
-    ${INCLUDE_PATH}/primitive.c)
+    ${SOURCE_PATH}/eval.c
+    ${SOURCE_PATH}/hashtable.c
+    ${SOURCE_PATH}/init.c
+    ${SOURCE_PATH}/main.c
+    ${SOURCE_PATH}/object.c
+    ${SOURCE_PATH}/parser.c
+    ${SOURCE_PATH}/primitive.c)
 
 set(HEADERS
     ${INCLUDE_PATH}/eval.h

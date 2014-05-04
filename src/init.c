@@ -81,4 +81,4 @@ static void define_recursive(char *ad_name, char *body, int depth,
         sprintf(bufa, "d%s", ad_name);
         sprintf(bufb, "(cdr %s)", body);
         define_recursive(bufa, bufb, depth + 1, env);
-    }
+}

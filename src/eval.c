@@ -18,8 +18,8 @@
 /* Parse and evaluate string */
 object *eval_str(const char *s, env_hashtable *env)
 {
-    parser p;
-    object *obj = parse_single(&p, s);
+    parser *p = parser_new();
+    object *obj = parse_single(p, s);
     return eval(obj, env);
 }
 

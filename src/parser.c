@@ -26,7 +26,7 @@ static int read_char(parser *p)
         p->token_buffer[p->token_len++] = p->cur_c;
         p->token_buffer[p->token_len] = '\0';
     }
-    if (p->read_buffer)
+    if (p->read_from_buffer)
         p->cur_c = p->input_buffer[p->read_pos++];
     else
         p->cur_c = fgetc(p->in);
@@ -90,22 +90,44 @@ static int next_token(parser *p)
     return p->cur_tok = read_token(p);
 }
 
-void parser_reset(parser *p)
+parser *parser_new()
+{
+    parser *p = (parser *) malloc(sizeof(parser));
+    parser_init(p);
+    return p;
+}
+
+void parser_init(parser *p)
 {
     p->in = stdin;
     p->cur_c = EOF;
     p->cur_tok = EOF;
-    p->read_buffer = 0;
+    p->input_buffer = NULL;
+    p->read_from_buffer = 0;
     p->single_line = 0;
     p->token_len = 0;
 }
 
-object *parse_single(parser *p, char *s)
+void parser_reset(parser *p)
+{
+    if (p->input_buffer)
+        free(p->input_buffer);
+    parser_init(p);
+}
+
+void parser_free(parser *p)
+{
+    if (p->input_buffer)
+        free(p->input_buffer);
+    free(p);
+}
+
+object *parse_single(parser *p, const char *s)
 {
     parser_reset(p);
     if (s) {
-        strcpy(p->input_buffer, s);
-        p->read_buffer = 1;
+        p->input_buffer = strdup(s);
+        p->read_from_buffer = 1;
         p->read_pos = 0;
     }
     p->single_line = 1;
@@ -120,7 +142,7 @@ object *parse_element(parser *p)
 {
     object *ret = null_object;
     if (p->cur_tok == TOK_LPAREN)
-        ret = parse_list();
+        ret = parse_list(p);
     else if (p->cur_tok == TOK_SYMBOL) {
         ret = symbol(p->token_buffer);
         next_token(p);

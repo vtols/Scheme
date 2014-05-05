@@ -61,18 +61,20 @@ void print_usage()
 
 void run_interactive_loop(const char *prompt, env_hashtable *env)
 {
-    parser p;
+    parser *p = parser_new();
     object *obj;
 
     while (1) {
         printf("%s", (prompt ? prompt : DEFAULT_PROMPT));
         
-        obj = parse_single(&p, NULL);
+        obj = parse_single(p, NULL);
         if (obj == null_object)
             break;
         obj = eval(obj, env);
         print_object_newline(obj);
     }
+    
+    parser_free(p);
 }
 
 void run_single(const char *expr, env_hashtable *env)

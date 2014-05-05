@@ -32,7 +32,7 @@ struct parser
     int token_len;
     
     /* Flag which means we read from buffer */
-    int read_buffer;
+    int read_from_buffer;
     
     /* Flag which means we want to read single line */
     int single_line;
@@ -47,15 +47,18 @@ struct parser
     char token_buffer[MAXBUF];
     
     /* Buffer for reading */
-    char input_buffer[MAXBUF];
+    char *input_buffer;
 };
 
 extern char *names[];
 
+parser *parser_new();
+void parser_init(parser *p);
 void parser_reset(parser *p);
+void parser_free(parser *p);
 
-object *parse_single();
-object *parse_list();
-object *parse_element();
+object *parse_single(parser *p, const char *s);
+object *parse_list(parser *p);
+object *parse_element(parser *p);
 
 #endif /* PARSER_H */

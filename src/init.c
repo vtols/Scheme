@@ -80,12 +80,10 @@ static void define_recursive(buffer *ad_name, buffer *body, int depth,
         if (depth > 4)
             return;
         if (depth > 1) {
-            expr_buffer = buffer_new("");
-            buffer_append_str(expr_buffer, "(define c");
-            buffer_append_buffer(expr_buffer, ad_name);
-            buffer_append_str(expr_buffer, "r (lambda (x) ");
-            buffer_append_buffer(expr_buffer, body);
-            buffer_append_str(expr_buffer, "))");
+            expr_buffer = buffer_nprintf("(define c%br"
+                                         " (lambda (x) %b))",
+                                         ad_name,
+                                         body);
             
             expr_str = buffer_to_str(expr_buffer);
             
@@ -95,24 +93,15 @@ static void define_recursive(buffer *ad_name, buffer *body, int depth,
             free(expr_buffer);
         }
         
-        new_ad_name = buffer_new("a");
-        buffer_append_buffer(new_ad_name, ad_name);
-        
-        new_body = buffer_new("(car ");
-        buffer_append_buffer(new_body, body);
-        buffer_append_str(new_body, ")");
+        new_ad_name = buffer_nprintf("a%b", ad_name);
+        new_body = buffer_nprintf("(car %b)", body);
         
         define_recursive(new_ad_name, new_body, depth + 1, env);
         buffer_free(new_ad_name);
         buffer_free(new_body);
         
-        
-        new_ad_name = buffer_new("d");
-        buffer_append_buffer(new_ad_name, ad_name);
-        
-        new_body = buffer_new("(cdr ");
-        buffer_append_buffer(new_body, body);
-        buffer_append_str(new_body, ")");
+        new_ad_name = buffer_nprintf("d%b", ad_name);
+        new_body = buffer_nprintf("(cdr %b)", body);
         
         define_recursive(new_ad_name, new_body, depth + 1, env);
         buffer_free(new_ad_name);

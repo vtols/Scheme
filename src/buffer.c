@@ -19,6 +19,19 @@ buffer *buffer_new(const char *s)
     return b;
 }
 
+void buffer_free(buffer *b)
+{
+    buffer_block *current, *next;
+    
+    current = b->first_block;
+    while (current) {
+        next = current->next_block;
+        free(current);
+        current = next;
+    }
+    free(b);
+}
+
 void buffer_append_char(buffer *b, char c)
 {
     buffer_block *new_block;

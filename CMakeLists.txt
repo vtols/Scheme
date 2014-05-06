@@ -40,6 +40,7 @@ set(SOURCES
     ${SOURCE_PATH}/main.c
     ${SOURCE_PATH}/object.c
     ${SOURCE_PATH}/parser.c
+    ${SOURCE_PATH}/parser_object.c
     ${SOURCE_PATH}/primitive.c)
 
 set(HEADERS
@@ -49,6 +50,7 @@ set(HEADERS
     ${INCLUDE_PATH}/init.h
     ${INCLUDE_PATH}/object.h
     ${INCLUDE_PATH}/parser.h
+    ${INCLUDE_PATH}/parser_object.h
     ${INCLUDE_PATH}/primitive.h)
 
 add_executable(${BINARY} ${SOURCES} ${HEADERS})

@@ -13,7 +13,7 @@
 
 void print_usage();
 void run_interactive_loop(const char *prompt, env_hashtable *env);
-void run_single(const char *expr, env_hashtable *env);
+void run_expression(const char *expr, env_hashtable *env);
 
 int main(int argc, char *argv[])
 {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     if (!expr)
         run_interactive_loop(prompt, global_env);
     else
-        run_single(expr, global_env);
+        run_expression(expr, global_env);
     
     return 0;
 }
@@ -80,10 +80,20 @@ void run_interactive_loop(const char *prompt, env_hashtable *env)
     parser_free(p);
 }
 
-void run_single(const char *expr, env_hashtable *env)
+void run_expression(const char *expr, env_hashtable *env)
 {
     object *obj;
+    parser *p = parser_new();
     
-    obj = eval_str(expr, env);
-    print_object_newline(obj);
+    parser_set_str(p, expr);
+
+    while (1) {
+        obj = parse_single(p);
+        if (obj == null_object)
+            break;
+        obj = eval(obj, env);
+        print_object_newline(obj);
+    }
+
+    parser_free(p);
 }

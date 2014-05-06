@@ -14,7 +14,7 @@ void parser_init(parser *p)
 {
     p->in = stdin;
     p->cur_c = EOF;
-    p->cur_tok = EOF;
+    p->cur_tok = TOK_EOF;
     p->input_buffer = NULL;
     p->read_from_buffer = 0;
     p->single_line = 0;

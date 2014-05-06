@@ -16,6 +16,7 @@ void parser_init(parser *p)
     p->cur_c = EOF;
     p->cur_tok = TOK_EOF;
     p->input_buffer = NULL;
+    p->read_pos = 0;
     p->read_from_buffer = 0;
     p->single_line = 0;
     p->token_buffer = buffer_new(NULL);

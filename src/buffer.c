@@ -131,3 +131,44 @@ char *buffer_to_str(buffer *b)
     
     return s;
 }
+
+void buffer_printf(buffer *b, const char *format, ...)
+{
+    va_list ap;
+    
+    va_start(ap, format);
+    buffer_vprintf(b, format, ap);
+    va_end(ap);
+}
+
+void buffer_vprintf(buffer *b, const char *format, va_list ap)
+{
+    char c;
+    const char *s;
+    buffer *buf;
+    
+    while (*format) {
+        if (*format == '%') {
+            format++;
+            switch (*format) {
+                case 'c':
+                    c = va_arg(ap, int);
+                    buffer_append_char(b, c);
+                    break;
+                case 's':
+                    s = va_arg(ap, const char *);
+                    buffer_append_str(b, s);
+                    break;
+                case 'b':
+                    buf = va_arg(ap, buffer *);
+                    buffer_append_buffer(b, buf);
+                    break;
+                default:
+                    buffer_append_char(b, '%');
+                    break;
+            }
+        } else
+            buffer_append_char(b, *format);
+        format++;
+    }
+}

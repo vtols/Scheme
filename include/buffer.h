@@ -2,6 +2,7 @@
 #define BUFFER_H
 
 #include <stddef.h>
+#include <stdarg.h>
 
 #define BUFFER_BLOCK_SIZE 128
 
@@ -54,5 +55,8 @@ void buffer_append_char(buffer *b, char c);
 void buffer_append_str(buffer *b, const char *c);
 void buffer_append_buffer(buffer *b, buffer *x);
 char *buffer_to_str(buffer *b);
+
+void buffer_printf(buffer *b, const char *format, ...);
+void buffer_vprintf(buffer *b, const char *format, va_list ap);
 
 #endif /* BUFFER_H */

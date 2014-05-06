@@ -33,6 +33,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 
 
 set(SOURCES
+    ${SOURCE_PATH}/buffer.c
     ${SOURCE_PATH}/eval.c
     ${SOURCE_PATH}/hashtable.c
     ${SOURCE_PATH}/init.c
@@ -42,6 +43,7 @@ set(SOURCES
     ${SOURCE_PATH}/primitive.c)
 
 set(HEADERS
+    ${INCLUDE_PATH}/buffer.h
     ${INCLUDE_PATH}/eval.h
     ${INCLUDE_PATH}/hashtable.h
     ${INCLUDE_PATH}/init.h

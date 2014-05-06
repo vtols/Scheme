@@ -11,6 +11,9 @@
 /* Primitive procedures */
 #include <primitive.h>
 
+/* Buffers */
+#include <buffer.h>
+
 /* Item of initialization table */
 struct init {
     char *key;
@@ -31,8 +34,8 @@ static struct init proc_init_table[] = {
 
 static void init_primitive_procedures(env_hashtable *env);
 static void define_pair_procedures(env_hashtable *env);
-static void define_recursive(char *ad_name, char *body, int depth,
-                        env_hashtable *env);
+static void define_recursive(buffer *ad_name, buffer *body, int depth,
+                                env_hashtable *env);
 
 void init_global_environment(env_hashtable *env)
 {
@@ -58,27 +61,60 @@ static void init_primitive_procedures(env_hashtable *env)
 /* Define procedures cadr, caddr, etc. */
 static void define_pair_procedures(env_hashtable *env)
 {
-    define_recursive("", "x", 0, env);
+    buffer *a = buffer_new(""),
+           *b = buffer_new("x");
+           
+    define_recursive(a, b, 0, env);
+    
+    buffer_free(a);
+    buffer_free(b);
 }
 
-static void define_recursive(char *ad_name, char *body, int depth,
-                        env_hashtable *env) {
-        char bufa[1000], bufb[1000];
+static void define_recursive(buffer *ad_name, buffer *body, int depth,
+                                env_hashtable *env) {
+        buffer *expr_buffer,
+               *new_ad_name,
+               *new_body;
+        char *expr_str;
+        
         if (depth > 4)
             return;
         if (depth > 1) {
-            sprintf(bufa,
-                    "(define c%sr (lambda (x) %s))",
-                    ad_name,
-                    body);
-            eval_str(bufa, env);
+            expr_buffer = buffer_new("");
+            buffer_append_str(expr_buffer, "(define c");
+            buffer_append_buffer(expr_buffer, ad_name);
+            buffer_append_str(expr_buffer, "r (lambda (x) ");
+            buffer_append_buffer(expr_buffer, body);
+            buffer_append_str(expr_buffer, "))");
+            
+            expr_str = buffer_to_str(expr_buffer);
+            
+            eval_str(expr_str, env);
+            
+            free(expr_str);
+            free(expr_buffer);
         }
         
-        sprintf(bufa, "a%s", ad_name);
-        sprintf(bufb, "(car %s)", body);
-        define_recursive(bufa, bufb, depth + 1, env);
+        new_ad_name = buffer_new("a");
+        buffer_append_buffer(new_ad_name, ad_name);
         
-        sprintf(bufa, "d%s", ad_name);
-        sprintf(bufb, "(cdr %s)", body);
-        define_recursive(bufa, bufb, depth + 1, env);
+        new_body = buffer_new("(car ");
+        buffer_append_buffer(new_body, body);
+        buffer_append_str(new_body, ")");
+        
+        define_recursive(new_ad_name, new_body, depth + 1, env);
+        buffer_free(new_ad_name);
+        buffer_free(new_body);
+        
+        
+        new_ad_name = buffer_new("d");
+        buffer_append_buffer(new_ad_name, ad_name);
+        
+        new_body = buffer_new("(cdr ");
+        buffer_append_buffer(new_body, body);
+        buffer_append_str(new_body, ")");
+        
+        define_recursive(new_ad_name, new_body, depth + 1, env);
+        buffer_free(new_ad_name);
+        buffer_free(new_body);
 }

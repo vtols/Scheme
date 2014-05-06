@@ -61,13 +61,16 @@ void print_usage()
 
 void run_interactive_loop(const char *prompt, env_hashtable *env)
 {
-    parser *p = parser_new();
     object *obj;
+    parser *p = parser_new();
+    
+    parser_set_file(p, stdin);
 
     while (1) {
-        printf("%s", (prompt ? prompt : DEFAULT_PROMPT));
+        if (parser_at_end(p))
+            printf("%s", (prompt ? prompt : DEFAULT_PROMPT));
         
-        obj = parse_single(p, NULL);
+        obj = parse_single(p);
         if (obj == null_object)
             break;
         obj = eval(obj, env);

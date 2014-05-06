@@ -19,7 +19,8 @@
 object *eval_str(const char *s, env_hashtable *env)
 {
     parser *p = parser_new();
-    object *obj = parse_single(p, s);
+    parser_set_str(p, s);
+    object *obj = parse_single(p);
     return eval(obj, env);
 }
 

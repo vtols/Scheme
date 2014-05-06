@@ -4,7 +4,7 @@
 #include <object.h>
 #include <parser_object.h>
 
-object *parse_single(parser *p, const char *s);
+object *parse_single(parser *p);
 object *parse_list(parser *p);
 object *parse_element(parser *p);
 

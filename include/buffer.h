@@ -57,6 +57,7 @@ void buffer_append_buffer(buffer *b, buffer *x);
 char *buffer_to_str(buffer *b);
 
 void buffer_printf(buffer *b, const char *format, ...);
+buffer *buffer_nprintf(const char *format, ...);
 void buffer_vprintf(buffer *b, const char *format, va_list ap);
 
 #endif /* BUFFER_H */

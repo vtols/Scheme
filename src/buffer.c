@@ -141,6 +141,18 @@ void buffer_printf(buffer *b, const char *format, ...)
     va_end(ap);
 }
 
+buffer *buffer_nprintf(const char *format, ...)
+{
+    va_list ap;
+    buffer *b = buffer_new(NULL);
+    
+    va_start(ap, format);
+    buffer_vprintf(b, format, ap);
+    va_end(ap);
+    
+    return b;
+}
+
 void buffer_vprintf(buffer *b, const char *format, va_list ap)
 {
     char c;

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <buffer.h>
@@ -17,6 +18,32 @@ buffer *buffer_new(const char *s)
     buffer_append_str(b, s);
     
     return b;
+}
+
+void buffer_get_iterator(buffer *b, buffer_iterator *it)
+{
+    it->it_buf = b;
+    it->cur_block = b->first_block;
+    it->block_pos = 0;
+}
+
+int buffer_iterator_next(buffer_iterator *it)
+{
+    int c;
+    
+    if (!it->cur_block ||
+        (it->cur_block == it->it_buf->last_block &&
+         it->block_pos == it->it_buf->last_fill))
+        return EOF;
+    
+    c = it->cur_block->data[it->block_pos++];
+    
+    if (it->block_pos == BUFFER_BLOCK_SIZE) {
+        it->cur_block = it->cur_block->next_block;
+        it->block_pos = 0;
+    }
+    
+    return c;
 }
 
 void buffer_free(buffer *b)
@@ -46,6 +73,7 @@ void buffer_append_char(buffer *b, char c)
     }
     
     b->last_block->data[b->last_fill++] = c;
+    b->string_length++;
 }
 
 void buffer_append_str(buffer *b, const char *s)
@@ -56,22 +84,30 @@ void buffer_append_str(buffer *b, const char *s)
         buffer_append_char(b, *s++);
 }
 
+void buffer_append_buffer(buffer *b, buffer *x)
+{
+    int c;
+    buffer_iterator it;
+    
+    buffer_get_iterator(x, &it);
+    
+    while((c = buffer_iterator_next(&it)) != EOF)
+        buffer_append_char(b, c);
+}
+
 char *buffer_to_str(buffer *b)
 {
-    size_t s_pos, b_pos, count;
-    buffer_block *current_block = b->first_block;
+    int c;
+    size_t s_pos;
+    buffer_iterator it;
+    
+    buffer_get_iterator(b, &it);
     
     char *s = calloc(b->string_length + 1, sizeof(char));
     
     s_pos = 0;
-    while(current_block) {
-        count = (current_block == b->last_block ? 
-                    b->last_fill :
-                    BUFFER_BLOCK_SIZE);
-        for (b_pos = 0; b_pos < count; b_pos++, s_pos++)
-            s[s_pos] = current_block->data[b_pos];
-        current_block = current_block->next_block;
-    }
+    while((c = buffer_iterator_next(&it)) != EOF)
+        s[s_pos++] = c;
     
     return s;
 }

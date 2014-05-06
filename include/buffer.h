@@ -7,6 +7,7 @@
 
 typedef struct buffer buffer;
 typedef struct buffer_block buffer_block;
+typedef struct buffer_iterator buffer_iterator;
 
 struct buffer
 {
@@ -32,10 +33,25 @@ struct buffer_block
     char data[BUFFER_BLOCK_SIZE];
 };
 
+struct buffer_iterator
+{
+    /* Buffer for iteration */
+    buffer *it_buf;
+    
+    /* Current block */
+    buffer_block *cur_block;
+    
+    /* Position in block */
+    size_t block_pos;
+};
+
 buffer *buffer_new(const char *s);
+void buffer_get_iterator(buffer *b, buffer_iterator *it);
+int buffer_iterator_next(buffer_iterator *it);
 void buffer_free(buffer *b);
 void buffer_append_char(buffer *b, char c);
 void buffer_append_str(buffer *b, const char *c);
+void buffer_append_buffer(buffer *b, buffer *x);
 char *buffer_to_str(buffer *b);
 
 #endif /* BUFFER_H */

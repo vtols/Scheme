@@ -22,10 +22,8 @@ static int next_token(parser *p);
 
 static int read_char(parser *p)
 {
-    if (p->cur_c != EOF) {
-        p->token_buffer[p->token_len++] = p->cur_c;
-        p->token_buffer[p->token_len] = '\0';
-    }
+    if (p->cur_c != EOF)
+        buffer_append_char(p->token_buffer, p->cur_c);
     if (p->read_from_buffer)
         p->cur_c = p->input_buffer[p->read_pos++];
     else
@@ -39,11 +37,11 @@ static int read_token(parser *p)
 {
     int ret = TOK_EOF, all_digit = 1;
     
-    p->token_len = 0;
+    buffer_reset(p->token_buffer);
     
     while (p->cur_c == ' ' || p->cur_c == '\n') {
         read_char(p);
-        p->token_len = 0;
+        buffer_reset(p->token_buffer);
     }
         
     switch(p->cur_c) {
@@ -105,7 +103,7 @@ void parser_init(parser *p)
     p->input_buffer = NULL;
     p->read_from_buffer = 0;
     p->single_line = 0;
-    p->token_len = 0;
+    p->token_buffer = buffer_new(NULL);
 }
 
 void parser_reset(parser *p)
@@ -119,6 +117,7 @@ void parser_free(parser *p)
 {
     if (p->input_buffer)
         free(p->input_buffer);
+    free(p->token_buffer);
     free(p);
 }
 
@@ -141,13 +140,19 @@ object *parse_single(parser *p, const char *s)
 object *parse_element(parser *p)
 {
     object *ret = null_object;
+    char *token_buffer_str;
+    
     if (p->cur_tok == TOK_LPAREN)
         ret = parse_list(p);
     else if (p->cur_tok == TOK_SYMBOL) {
-        ret = symbol(p->token_buffer);
+        token_buffer_str = buffer_to_str(p->token_buffer);
+        ret = symbol(token_buffer_str);
+        free(token_buffer_str);
         next_token(p);
     } else if (p->cur_tok == TOK_NUMBER) {
-        ret = number_str(p->token_buffer);
+        token_buffer_str = buffer_to_str(p->token_buffer);
+        ret = number_str(token_buffer_str);
+        free(token_buffer_str);
         next_token(p);
     } else if (p->cur_tok == TOK_TRUE) {
         ret = true_object;

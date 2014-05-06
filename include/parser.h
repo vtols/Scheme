@@ -2,8 +2,7 @@
 #define PARSER_H
 
 #include <object.h>
-
-#define MAXBUF 2000
+#include <buffer.h>
 
 typedef struct parser parser;
 
@@ -28,9 +27,6 @@ struct parser
     /* Current character */
     int cur_c;
     
-    /* Length of current token */
-    int token_len;
-    
     /* Flag which means we read from buffer */
     int read_from_buffer;
     
@@ -44,7 +40,7 @@ struct parser
     enum token cur_tok;
     
     /* Current token value */
-    char token_buffer[MAXBUF];
+    buffer *token_buffer;
     
     /* Buffer for reading */
     char *input_buffer;

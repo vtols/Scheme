@@ -46,6 +46,7 @@ struct buffer_iterator
 };
 
 buffer *buffer_new(const char *s);
+void buffer_reset(buffer *b);
 void buffer_get_iterator(buffer *b, buffer_iterator *it);
 int buffer_iterator_next(buffer_iterator *it);
 void buffer_free(buffer *b);

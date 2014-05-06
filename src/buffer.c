@@ -3,10 +3,29 @@
 
 #include <buffer.h>
 
+static void buffer_free_blocks(buffer *b);
+
 buffer *buffer_new(const char *s)
 {
     buffer *b = (buffer *) malloc(sizeof(buffer));
-    buffer_block *first = (buffer_block *) malloc(sizeof(buffer_block));
+    
+    b->first_block = NULL;
+    buffer_reset(b);
+    
+    buffer_append_str(b, s);
+    
+    return b;
+}
+
+void buffer_reset(buffer *b)
+{
+    buffer_block *first;
+    
+    if (b->first_block &&
+        b->first_block != b->last_block)
+        buffer_free_blocks(b);
+    
+    first = (buffer_block *) malloc(sizeof(buffer_block));
     
     first->next_block = NULL;
     
@@ -14,10 +33,6 @@ buffer *buffer_new(const char *s)
     b->block_count = 1;
     b->last_fill = 0;
     b->string_length = 0;
-    
-    buffer_append_str(b, s);
-    
-    return b;
 }
 
 void buffer_get_iterator(buffer *b, buffer_iterator *it)
@@ -46,7 +61,7 @@ int buffer_iterator_next(buffer_iterator *it)
     return c;
 }
 
-void buffer_free(buffer *b)
+static void buffer_free_blocks(buffer *b)
 {
     buffer_block *current, *next;
     
@@ -56,6 +71,11 @@ void buffer_free(buffer *b)
         free(current);
         current = next;
     }
+}
+
+void buffer_free(buffer *b)
+{
+    buffer_free_blocks(b);
     free(b);
 }
 

@@ -35,5 +35,6 @@ struct buffer_block
 buffer *buffer_new(const char *s);
 void buffer_append_char(buffer *b, char c);
 void buffer_append_str(buffer *b, const char *c);
+char *buffer_to_str(buffer *b);
 
 #endif /* BUFFER_H */

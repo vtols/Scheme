@@ -13,6 +13,7 @@
 
 void print_usage();
 void run_interactive_loop(const char *prompt, env_hashtable *env);
+void run_file(FILE *f, env_hashtable *env);
 void run_expression(const char *expr, env_hashtable *env);
 
 int main(int argc, char *argv[])
@@ -20,7 +21,8 @@ int main(int argc, char *argv[])
     env_hashtable *global_env;
     char *expr = NULL,
          *prompt = NULL;
-    int opt;
+    int opt, ind = 1;
+    FILE *f;
     
 #ifdef HAVE_GETOPT
     while ((opt = getopt(argc, argv, "e:hp:")) != -1){
@@ -39,12 +41,20 @@ int main(int argc, char *argv[])
                 break;
         };
     };
+    ind = optind;
 #endif
     
     global_env = env_hashtable_new();
     init_global_environment(global_env);
     
-    if (!expr)
+    if (ind < argc) {
+        f = fopen(argv[optind], "r");
+        if (!f) {
+            perror("fopen");
+            exit(EXIT_FAILURE);
+        }
+        run_file(f, global_env);
+    } else if (!expr)
         run_interactive_loop(prompt, global_env);
     else
         run_expression(expr, global_env);
@@ -77,6 +87,24 @@ void run_interactive_loop(const char *prompt, env_hashtable *env)
         print_object_newline(obj);
     }
     
+    parser_free(p);
+}
+
+void run_file(FILE *f, env_hashtable *env)
+{
+    object *obj;
+    parser *p = parser_new();
+
+    parser_set_file(p, f);
+
+    while (1) {
+        obj = parse_single(p);
+        if (obj == null_object)
+            break;
+        obj = eval(obj, env);
+        print_object_newline(obj);
+    }
+
     parser_free(p);
 }
 

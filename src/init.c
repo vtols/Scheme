@@ -72,38 +72,38 @@ static void define_pair_procedures(env_hashtable *env)
 
 static void define_recursive(buffer *ad_name, buffer *body, int depth,
                                 env_hashtable *env) {
-        buffer *expr_buffer,
-               *new_ad_name,
-               *new_body;
-        char *expr_str;
+    buffer *expr_buffer,
+           *new_ad_name,
+           *new_body;
+    char *expr_str;
+
+    if (depth > 4)
+        return;
+    if (depth > 1) {
+        expr_buffer = buffer_nprintf("(define c%br"
+                                     " (lambda (x) %b))",
+                                     ad_name,
+                                     body);
         
-        if (depth > 4)
-            return;
-        if (depth > 1) {
-            expr_buffer = buffer_nprintf("(define c%br"
-                                         " (lambda (x) %b))",
-                                         ad_name,
-                                         body);
-            
-            expr_str = buffer_to_str(expr_buffer);
-            
-            eval_str(expr_str, env);
-            
-            free(expr_str);
-            free(expr_buffer);
-        }
+        expr_str = buffer_to_str(expr_buffer);
         
-        new_ad_name = buffer_nprintf("a%b", ad_name);
-        new_body = buffer_nprintf("(car %b)", body);
+        eval_str(expr_str, env);
         
-        define_recursive(new_ad_name, new_body, depth + 1, env);
-        buffer_free(new_ad_name);
-        buffer_free(new_body);
-        
-        new_ad_name = buffer_nprintf("d%b", ad_name);
-        new_body = buffer_nprintf("(cdr %b)", body);
-        
-        define_recursive(new_ad_name, new_body, depth + 1, env);
-        buffer_free(new_ad_name);
-        buffer_free(new_body);
+        free(expr_str);
+        free(expr_buffer);
+    }
+
+    new_ad_name = buffer_nprintf("a%b", ad_name);
+    new_body = buffer_nprintf("(car %b)", body);
+
+    define_recursive(new_ad_name, new_body, depth + 1, env);
+    buffer_free(new_ad_name);
+    buffer_free(new_body);
+
+    new_ad_name = buffer_nprintf("d%b", ad_name);
+    new_body = buffer_nprintf("(cdr %b)", body);
+
+    define_recursive(new_ad_name, new_body, depth + 1, env);
+    buffer_free(new_ad_name);
+    buffer_free(new_body);
 }

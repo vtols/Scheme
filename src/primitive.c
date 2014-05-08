@@ -62,3 +62,8 @@ object *proc_primitive_cdr(object *args)
 {
     return CDR(CAR(args));
 }
+
+object *proc_primitive_apply(object *args)
+{
+    return apply(CAR(args), CADR(args));
+}

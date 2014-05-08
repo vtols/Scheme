@@ -63,6 +63,13 @@ object *eval(object *obj, env_hashtable *env)
             return apply(eobj, t);
         } else if (strcmp("quote", STR(t)) == 0) {
             return CADR(obj);
+        } else if (strcmp("if", STR(t)) == 0) {
+            eobj = eval(CADR(obj), env);
+            if (eobj != false_object)
+                return eval(CADDR(obj), env);
+            if (CDDDR(obj) != null_object)
+                return eval(CADDDR(obj), env);
+            return NULL;
         }
     }
     

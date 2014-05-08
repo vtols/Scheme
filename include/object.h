@@ -63,7 +63,9 @@ struct object
 #define CDR(__x) ((__x)->obj.pr.cdr)
 #define CADR(__x) CAR(CDR(__x))
 #define CDDR(__x) CDR(CDR(__x))
-#define CADDR(__x) CAR(CDR(CDR(__x)))
+#define CADDR(__x) CAR(CDDR(__x))
+#define CDDDR(__x) CDR(CDDR(__x))
+#define CADDDR(__x) CAR(CDDDR(__x))
 
 /* Access to compound procedures internals */
 #define CPROC(__x) ((__x)->obj.c_proc)

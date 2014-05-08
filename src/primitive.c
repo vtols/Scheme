@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include <eval.h>
 #include <primitive.h>
 
@@ -84,4 +86,21 @@ object *proc_primitive_cdr(object *args)
 object *proc_primitive_apply(object *args)
 {
     return apply(CAR(args), CADR(args));
+}
+
+object *proc_primitive_display(object *args)
+{
+    object *arg;
+    while (args != null_object) {
+        arg = CAR(args);
+        print_object(arg);
+        args = CDR(args);
+    }
+    return NULL;
+}
+
+object *proc_primitive_newline(object *args)
+{
+    putchar('\n');
+    return NULL;
 }

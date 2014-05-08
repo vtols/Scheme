@@ -31,6 +31,8 @@ static struct init proc_init_table[] = {
     {"car", proc_primitive_car},
     {"cdr", proc_primitive_cdr},
     {"apply", proc_primitive_apply},
+    {"display", proc_primitive_display},
+    {"newline", proc_primitive_newline},
     {"", NULL},
 };
 

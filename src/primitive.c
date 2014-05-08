@@ -1,3 +1,4 @@
+#include <eval.h>
 #include <primitive.h>
 
 object *proc_primitive_plus(object *args)

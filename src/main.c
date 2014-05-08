@@ -102,7 +102,6 @@ void run_file(FILE *f, env_hashtable *env)
         if (obj == null_object)
             break;
         obj = eval(obj, env);
-        print_object_newline(obj);
     }
 
     parser_free(p);

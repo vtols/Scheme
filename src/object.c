@@ -83,6 +83,20 @@ object *compound_procedure(object *params, object *body,
     return p;
 }
 
+void object_list_append(object **list, object **tail, object *element)
+{
+    object *t;
+
+    t = cons(element, null_object);
+
+    if (!*tail)
+        *list = t;
+    else
+        CDR(*tail) = t;
+
+    *tail = t;
+}
+
 void print_object(object *obj)
 {
     int first = 1;

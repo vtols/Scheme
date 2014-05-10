@@ -93,6 +93,8 @@ object *compound_procedure(object *params, object *body,
             env_hashtable *env);
 object *cons(object *first, object *rest);
 
+void object_list_append(object **list, object **tail, object *element);
+
 void print_object(object *obj);
 void print_object_newline(object *obj);
 

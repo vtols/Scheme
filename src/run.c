@@ -27,7 +27,15 @@ void run_interactive_loop(const char *prompt, env_hashtable *env)
     parser_free(p);
 }
 
-void run_file(FILE *f, env_hashtable *env)
+void run_file(char *path, env_hashtable *env)
+{
+    FILE *f;
+
+    f = fopen(path, "r");
+    run_opened_file(f, env);
+}
+
+void run_opened_file(FILE *f, env_hashtable *env)
 {
     object *obj;
     parser *p = parser_new();

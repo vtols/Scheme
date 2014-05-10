@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
             perror("fopen");
             exit(EXIT_FAILURE);
         }
-        run_file(f, global_env);
+        run_opened_file(f, global_env);
     } else if (!expr)
         run_interactive_loop(prompt, global_env);
     else

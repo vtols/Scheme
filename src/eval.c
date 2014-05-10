@@ -14,6 +14,9 @@
 
 #include <eval.h>
 
+static object *eval_preproc(object *obj, env_hashtable *env);
+static object *preprocess_syntax(object *obj);
+static object *preprocess_list_syntax(object *list);
 
 /* Parse and evaluate string */
 object *eval_str(const char *s, env_hashtable *env)
@@ -24,10 +27,15 @@ object *eval_str(const char *s, env_hashtable *env)
     return eval(obj, env);
 }
 
-/* Evaluate object 
+object *eval(object *obj, env_hashtable *env)
+{
+    return eval_preproc(preprocess_syntax(obj), env);
+}
+
+/* Evaluate preprocessed object
  * NULL return value means Nothing
  */
-object *eval(object *obj, env_hashtable *env)
+static object *eval_preproc(object *obj, env_hashtable *env)
 {
     object *cur, *eobj, 
         *last_pair, *t,
@@ -45,7 +53,7 @@ object *eval(object *obj, env_hashtable *env)
             return eobj;
         } else if (strcmp("define", STR(t)) == 0) {
             if (TYPE(CADR(obj)) == OBJ_SYMBOL) {
-                eobj = eval(CADDR(obj), env);
+                eobj = eval_preproc(CADDR(obj), env);
                 env_hashtable_insert(env, STR(CADR(obj)), eobj);
                 return NULL; /* Not error, just nothing */
             } else if (TYPE(CADR(obj)) == OBJ_PAIR) {
@@ -58,22 +66,22 @@ object *eval(object *obj, env_hashtable *env)
             obj = CDR(obj);
             eobj = NULL; /* Not error, just nothing */
             while (obj != null_object) {
-                eobj = eval(CAR(obj), env);
+                eobj = eval_preproc(CAR(obj), env);
                 obj = CDR(obj);
             }
             return eobj;
         } else if (strcmp("apply", STR(t)) == 0) {
-            eobj = eval(CADR(obj), env);
-            t = eval(CADDR(obj), env);
+            eobj = eval_preproc(CADR(obj), env);
+            t = eval_preproc(CADDR(obj), env);
             return apply(eobj, t);
         } else if (strcmp("quote", STR(t)) == 0) {
             return CADR(obj);
         } else if (strcmp("if", STR(t)) == 0) {
-            eobj = eval(CADR(obj), env);
+            eobj = eval_preproc(CADR(obj), env);
             if (eobj != false_object)
-                return eval(CADDR(obj), env);
+                return eval_preproc(CADDR(obj), env);
             if (CDDDR(obj) != null_object)
-                return eval(CADDDR(obj), env);
+                return eval_preproc(CADDDR(obj), env);
             return NULL;
         }
     }
@@ -92,7 +100,7 @@ object *eval(object *obj, env_hashtable *env)
             
             while (cur != null_object && 
                    TYPE(cur) == OBJ_PAIR) {
-                t = cons(eval(CAR(cur), env), null_object);
+                t = cons(eval_preproc(CAR(cur), env), null_object);
                 if (!last_pair)
                     eobj = t;
                 else
@@ -109,6 +117,63 @@ object *eval(object *obj, env_hashtable *env)
         default:
             return NULL;
     }
+}
+
+static object *preprocess_syntax(object *obj)
+{
+    object *t;
+
+    if (TYPE(obj) == OBJ_PAIR &&
+        TYPE(CAR(obj)) == OBJ_SYMBOL) {
+        t = CAR(obj);
+        if (strcmp("let", STR(t)) == 0) {
+            CDR(obj) = preprocess_list_syntax(CDR(obj));
+
+            object *lambda_params = null_object,
+                   *lambda_params_tail = NULL,
+                   *lambda_args = null_object,
+                   *lambda_args_tail = NULL,
+                   *lambda_list = null_object,
+                   *lambda_list_tail = NULL,
+                   *lambda_body = CADDR(obj),
+                   *bindings = CADR(obj),
+                   *binding;
+
+            while (bindings != null_object) {
+                binding = CAR(bindings);
+                object_list_append(&lambda_params, &lambda_params_tail,
+                                   CAR(binding));
+                object_list_append(&lambda_args, &lambda_args_tail,
+                                   CADR(binding));
+
+                bindings = CDR(bindings);
+            }
+
+            object_list_append(&lambda_list, &lambda_list_tail,
+                               symbol("lambda"));
+            object_list_append(&lambda_list, &lambda_list_tail, lambda_params);
+            CDR(lambda_list_tail) = lambda_body;
+
+            lambda_list = cons(lambda_list, lambda_args);
+
+            return lambda_list;
+        }
+    }
+    return obj;
+}
+
+static object *preprocess_list_syntax(object *list)
+{
+    object *result_list = null_object,
+           *result_list_tail = NULL;
+
+    while (list != null_object) {
+        object_list_append(&result_list, &result_list_tail,
+                           preprocess_syntax(CAR(list)));
+        list = CDR(list);
+    }
+
+    return result_list;
 }
 
 /* Apply procedure */
@@ -144,7 +209,7 @@ object *apply(object *proc, object *args)
             params = CDR(params);
             args = CDR(args);
         }
-        return eval(CPROC_BODY(proc), e);
+        return eval_preproc(CPROC_BODY(proc), e);
     }
     return NULL;
 }

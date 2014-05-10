@@ -63,7 +63,9 @@ struct object
 #define CDR(__x) ((__x)->obj.pr.cdr)
 #define CADR(__x) CAR(CDR(__x))
 #define CDDR(__x) CDR(CDR(__x))
+#define CAADR(__x) CAR(CADR(__x))
 #define CADDR(__x) CAR(CDDR(__x))
+#define CDADR(__x) CDR(CADR(__x))
 #define CDDDR(__x) CDR(CDDR(__x))
 #define CADDDR(__x) CAR(CDDDR(__x))
 

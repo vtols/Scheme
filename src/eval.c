@@ -44,9 +44,16 @@ object *eval(object *obj, env_hashtable *env)
             eobj = compound_procedure(CADR(obj), CDDR(obj), env);
             return eobj;
         } else if (strcmp("define", STR(t)) == 0) {
-            eobj = eval(CADDR(obj), env);
-            env_hashtable_insert(env, STR(CADR(obj)), eobj);
-            return NULL; /* Not error, just nothing */
+            if (TYPE(CADR(obj)) == OBJ_SYMBOL) {
+                eobj = eval(CADDR(obj), env);
+                env_hashtable_insert(env, STR(CADR(obj)), eobj);
+                return NULL; /* Not error, just nothing */
+            } else if (TYPE(CADR(obj)) == OBJ_PAIR) {
+                eobj = compound_procedure(CDADR(obj), CDDR(obj), env);
+                env_hashtable_insert(env, STR(CAADR(obj)), eobj);
+                return NULL;
+            }
+            return NULL;
         } else if (strcmp("begin", STR(t)) == 0) {
             obj = CDR(obj);
             eobj = NULL; /* Not error, just nothing */

@@ -26,6 +26,7 @@ static struct init proc_init_table[] = {
     {"*", proc_primitive_mul},
     {"-", proc_primitive_minus},
     {"<", proc_primitive_less},
+    {"=", proc_primitive_equal},
     {"list", proc_primitive_list},
     {"cons", proc_primitive_cons},
     {"car", proc_primitive_car},

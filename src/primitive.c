@@ -63,6 +63,23 @@ object *proc_primitive_less(object *args)
     return (res ? true_object : false_object);
 }
 
+object *proc_primitive_equal(object *args)
+{
+    int last, cur, res = 1;
+
+    last = NUM(CAR(args));
+    args = CDR(args);
+
+    while (res && args != null_object) {
+        cur = NUM(CAR(args));
+        res &= last == cur;
+        last = cur;
+        args = CDR(args);
+    }
+
+    return (res ? true_object : false_object);
+}
+
 object *proc_primitive_list(object *args)
 {
     return args;

@@ -78,7 +78,7 @@ object *compound_procedure(object *params, object *body,
     object *p = ALLOC(object);
     TYPE(p) = OBJ_COMPOUND_PROCEDURE;
     CPROC_PARAMS(p) = params;
-    CPROC_BODY(p) = body;
+    CPROC_BODY(p) = cons(symbol("begin"), body);
     CPROC_ENV(p) = env;
     return p;
 }

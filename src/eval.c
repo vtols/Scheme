@@ -41,9 +41,7 @@ object *eval(object *obj, env_hashtable *env)
         TYPE(CAR(obj)) == OBJ_SYMBOL) {
         t = CAR(obj);
         if (strcmp("lambda", STR(t)) == 0) {
-            t = CDDR(obj);
-            t = cons(symbol("begin"), t);
-            eobj = compound_procedure(CADR(obj), t, env);
+            eobj = compound_procedure(CADR(obj), CDDR(obj), env);
             return eobj;
         } else if (strcmp("define", STR(t)) == 0) {
             eobj = eval(CADDR(obj), env);

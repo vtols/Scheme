@@ -8,6 +8,7 @@ object *proc_primitive_mul(object *args);
 object *proc_primitive_minus(object *args);
 object *proc_primitive_less(object *args);
 object *proc_primitive_equal(object *args);
+object *proc_primitive_eqv(object *args);
 object *proc_primitive_list(object *args);
 object *proc_primitive_cons(object *args);
 object *proc_primitive_car(object *args);

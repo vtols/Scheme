@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include <eval.h>
 #include <primitive.h>
@@ -78,6 +79,26 @@ object *proc_primitive_equal(object *args)
     }
 
     return (res ? true_object : false_object);
+}
+
+object *proc_primitive_eqv(object *args)
+{
+    object *x, *y, *ret;
+    
+    x = CAR(args);
+    y = CADR(args);
+    ret = false_object;
+    
+    if (x == y)
+        ret = true_object;
+    else if (TYPE(x) == OBJ_NUMBER && TYPE(y) == OBJ_NUMBER &&
+             NUM(x) == NUM(y))
+        ret = true_object;
+    else if (TYPE(x) == OBJ_SYMBOL && TYPE(y) == OBJ_SYMBOL &&
+             strcmp(STR(x), STR(y)) == 0)
+        ret = true_object;
+
+    return ret;
 }
 
 object *proc_primitive_list(object *args)

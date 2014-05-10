@@ -8,6 +8,9 @@
 /* eval_str */
 #include <eval.h>
 
+/* run_file */
+#include <run.h>
+
 /* Primitive procedures */
 #include <primitive.h>
 
@@ -48,9 +51,9 @@ void init_global_environment(env_hashtable *env)
 {
     init_primitive_procedures(env);
     define_pair_procedures(env);
-    
-    /* Parser determines empty brackets as null_object */
-    eval_str("(define null '())", env);
+
+    /* Preload file */
+    run_file("../lib/preload.scm", env);
 }
 
 /* Put all primitive procedures from table to environment */

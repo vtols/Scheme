@@ -101,6 +101,13 @@ object *proc_primitive_eqv(object *args)
     return ret;
 }
 
+object *proc_primitive_pair_quest(object *args)
+{
+    return (TYPE(CAR(args)) == OBJ_PAIR &&
+            CAR(args) != null_object) ?
+            true_object : false_object;
+}
+
 object *proc_primitive_list(object *args)
 {
     return args;

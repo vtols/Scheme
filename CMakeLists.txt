@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(Scheme)
 
+set(LIBDIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/" CACHE STRING "Library path")
 set(DEFAULT_PROMPT "> " CACHE STRING "Default prompt")
 
 if(CMAKE_COMPILER_IS_GNUCC)

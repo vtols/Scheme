@@ -17,6 +17,11 @@
 /* Buffers */
 #include <buffer.h>
 
+/* Path to lib/ */
+#include <config.h>
+
+#define PRELOAD_FILE LIBDIR "preload.scm"
+
 /* Item of initialization table */
 struct init {
     char *key;
@@ -53,7 +58,7 @@ void init_global_environment(env_hashtable *env)
     define_pair_procedures(env);
 
     /* Preload file */
-    run_file("../lib/preload.scm", env);
+    run_file(PRELOAD_FILE, env);
 }
 
 /* Put all primitive procedures from table to environment */

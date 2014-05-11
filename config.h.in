@@ -1,5 +1,6 @@
 #define PROGRAM_NAME "@BINARY@"
 #define DEFAULT_PROMPT "@DEFAULT_PROMPT@"
+#define LIBDIR "@LIBDIR@"
 
 #cmakedefine HAVE_GETOPT_H 1
 #cmakedefine HAVE_GETOPT 1

@@ -124,6 +124,7 @@ static object *preprocess_syntax(object *obj)
     object *t;
 
     if (TYPE(obj) == OBJ_PAIR &&
+        CAR(obj) &&
         TYPE(CAR(obj)) == OBJ_SYMBOL) {
         t = CAR(obj);
         if (strcmp("let", STR(t)) == 0) {
@@ -159,6 +160,9 @@ static object *preprocess_syntax(object *obj)
             return lambda_list;
         }
     }
+    if (TYPE(obj) == OBJ_PAIR) {
+        return preprocess_list_syntax(obj);
+    }
     return obj;
 }
 
@@ -168,6 +172,10 @@ static object *preprocess_list_syntax(object *list)
            *result_list_tail = NULL;
 
     while (list != null_object) {
+        if (TYPE(list) != OBJ_PAIR) {
+            CDR(result_list_tail) = list;
+            break;
+        }
         object_list_append(&result_list, &result_list_tail,
                            preprocess_syntax(CAR(list)));
         list = CDR(list);

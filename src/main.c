@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     init_global_environment(global_env);
     
     if (ind < argc) {
-        f = fopen(argv[optind], "r");
+        f = fopen(argv[ind], "r");
         if (!f) {
             perror("fopen");
             exit(EXIT_FAILURE);

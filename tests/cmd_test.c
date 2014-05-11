@@ -3,10 +3,12 @@
 
 #include <config.h>
 
-#if !defined(HAVE_POPEN) && defined(HAVE__POPEN)
-# define popen _popen
-#else
-# error "Popen not found."
+#if !defined(HAVE_POPEN)
+# if defined(HAVE__POPEN)
+#  define popen _popen
+# else
+#  error "Popen not found."
+# endif
 #endif
 
 int soft_strcmp(const char *a, const char *b)

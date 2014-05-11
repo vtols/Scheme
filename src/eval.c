@@ -152,7 +152,7 @@ static object *preprocess_syntax(object *obj)
             object_list_append(&lambda_list, &lambda_list_tail,
                                symbol("lambda"));
             object_list_append(&lambda_list, &lambda_list_tail, lambda_params);
-            CDR(lambda_list_tail) = lambda_body;
+            object_list_append(&lambda_list, &lambda_list_tail, lambda_body);
 
             lambda_list = cons(lambda_list, lambda_args);
 

@@ -28,6 +28,8 @@ include(CheckFunctionExists)
 
 check_include_files(getopt.h HAVE_GETOPT_H)
 check_function_exists(getopt HAVE_GETOPT)
+check_function_exists(popen HAVE_POPEN)
+check_function_exists(_popen HAVE__POPEN)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
                ${BUILD_CONFIG_PATH}/config.h)
@@ -57,3 +59,11 @@ set(HEADERS
     ${INCLUDE_PATH}/run.h)
 
 add_executable(${BINARY} ${SOURCES} ${HEADERS})
+
+enable_testing()
+
+option(ENABLE_TEST "Enable testing" ON)
+
+if(ENABLE_TEST)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
+endif()

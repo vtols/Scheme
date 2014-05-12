@@ -60,10 +60,9 @@ set(HEADERS
 
 add_executable(${BINARY} ${SOURCES} ${HEADERS})
 
-enable_testing()
-
 option(ENABLE_TEST "Enable testing" ON)
 
 if(ENABLE_TEST)
+    enable_testing()
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()
